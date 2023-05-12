@@ -1,0 +1,10 @@
+[servers]
+192.168.100.2
+
+[containers]
+debian-0 ansible_connection=docker
+
+[servers:vars]
+ansible_user=vagrant
+
+

@@ -1,0 +1,40 @@
+---
+- name: Installing Python on containers group
+  hosts: containers
+  gather_facts: false
+  tasks: 
+    - name: Installing Python and sudo
+      ansible.builtin.raw: apt-get update && apt-get install -y python3 sudo
+      changed_when: false
+
+- name: Installing and running Nginx, making default host index.html from template
+  hosts: all
+  become: true
+  tasks: 
+    - name: Installing Nginx
+      ansible.builtin.apt:
+        name: nginx 
+        state: present
+        force_apt_get: true
+        update_cache: true
+        cache_valid_time: 3600
+    - name: Ensure that Nginx service is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+    - name: Templating index.html to index.nginx-debian.html
+      ansible.builtin.template:
+        src: index.html.j2
+        dest: /var/www/html/index.nginx-debian.html
+        owner: root
+        group: root
+        mode: 0644
+
+- name: Getting nginx version and display it
+  hosts: all
+  tasks:
+    - name: Getting nginx version
+      command: nginx -v
+      register: nginx_ver
+      changed_when: false
+    - debug: msg={{nginx_ver.stderr_lines}}
