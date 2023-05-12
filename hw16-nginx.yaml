@@ -37,4 +37,5 @@
       command: nginx -v
       register: nginx_ver
       changed_when: false
-    - debug: msg={{nginx_ver.stderr_lines}}
+    - name: Displaying the version
+      debug: msg={{nginx_ver.stderr_lines}}
